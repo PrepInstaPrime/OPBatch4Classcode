@@ -39,26 +39,37 @@ public class GraphPart3 {
     }
 
     public void dijkstraAlgo(int src, int dest) {
-        boolean visited[] = new boolean[vertices + 1];
-        int distance[] = new int[vertices + 1];
+        boolean[] visited = new boolean[vertices + 1];
+        int[] distance = new int[vertices + 1];
         Arrays.fill(distance, Integer.MAX_VALUE);
+
         PriorityQueue<Pair> pq = new PriorityQueue<>((a, b) -> a.weight - b.weight);
+
         distance[src] = 0;
-        pq.offer(new Pair(0,src));
+        pq.offer(new Pair(0, src));
+
         while (!pq.isEmpty()) {
             Pair current = pq.poll();
             int node = current.dest;
-            for (Pair obj : wg.get(node)) {
-                int newNode = obj.dest;
-                int w = obj.weight;
-                if (!visited[newNode] && distance[node] + w < distance[newNode]) {
-                    distance[newNode] = distance[node] + w;
-                    visited[newNode] = true;
-                    pq.offer(obj);
+
+            if (visited[node])
+                continue;
+            visited[node] = true;
+
+            for (Pair edge : wg.get(node)) {
+                int next = edge.dest;
+                int w = edge.weight;
+
+                if (!visited[next] && distance[node] + w < distance[next]) {
+                    distance[next] = distance[node] + w;
+                    pq.offer(new Pair(distance[next], next));
                 }
             }
-            System.out.println("From source :" + src + " to dest the distance is : " + distance[dest]);
         }
+
+        System.out.println(
+                "From source " + src + " to dest " + dest +
+                        " the distance is : " + distance[dest]);
     }
 
     public static void main(String[] args) {
